@@ -1,73 +1,176 @@
-# POX
+# 🔐 SDN-Based Access Control System
 
-POX is a networking software platform written in Python.
+## 📌 Project Description
 
-POX started life as an OpenFlow controller, but can now also function as an
-OpenFlow switch, and can be useful for writing networking software in
-general.  It currently supports OpenFlow 1.0 and includes special support
-for the Open vSwitch/Nicira extensions.
+This project implements an **access control system using Software Defined Networking (SDN)**. It leverages a centralized controller to enforce network policies dynamically, allowing or denying traffic based on predefined rules. Unlike traditional networks where access control is distributed across devices, this system centralizes decision-making, improving scalability, flexibility, and security.
 
-POX versions are named.  Starting with POX "gar", POX officially requires
-Python 3.  The last version with support for Python 2 was POX "fangtooth".
-POX should run under Linux, Mac OS, and Windows.  (And just about anywhere
-else -- we've run it on Android phones, under FreeBSD, Haiku, and elsewhere.
-All you need is Python!)  Some features are not available on all platforms.
-Linux is the most featureful.
+The system monitors incoming network traffic, evaluates it against defined policies, and installs flow rules in switches to control packet forwarding behavior.
 
-This README contains some information to get you started, but is purposely
-brief.  For more information, please see the full documentation.
+---
 
+## ❗ Problem Statement
 
-## Running POX
+Traditional network access control systems suffer from several limitations:
 
-`pox.py` boots up POX. It takes a list of component names on the command line,
-locates the components, calls their `launch()` function (if it exists), and
-then transitions to the "up" state.
+* ❌ Decentralized rule management across multiple devices
+* ❌ Difficult to update and maintain policies
+* ❌ Lack of scalability in large networks
+* ❌ Increased chances of misconfiguration and security vulnerabilities
 
-If you run `./pox.py`, it will attempt to find an appropriate Python 3
-interpreter itself.  In particular, if there is a copy of PyPy in the main
-POX directory, it will use that (for a potentially large performance boost!).
-Otherwise it will look for things called `python3` and fall back to `python`.
-You can also, of course, invoke the desired Python interpreter manually
-(e.g., `python3 pox.py`).
+There is a need for a **centralized, flexible, and scalable solution** to efficiently manage access control in modern networks.
 
-The POX commandline optionally starts with POX's own options (see below).
-This is followed by the name of a POX component, which may be followed by
-options for that component.  This may be followed by further components
-and their options.
+---
 
-  ./pox.py [pox-options...] [component] [component-options...] ...
+## 🎯 Objectives
 
-### POX Options
+* To design a **centralized access control system** using SDN
+* To dynamically **allow or deny traffic** based on policies
+* To reduce manual configuration in network devices
+* To improve **network security and manageability**
+* To demonstrate **real-time policy enforcement** using SDN controller
 
-While components' options are up to the component (see the component's
-documentation), as mentioned above, POX has some options of its own.
-Some useful ones are:
+---
 
- | Option        | Meaning                                                   |
- | ------------- | --------------------------------------------------------- |
- |`--verbose`    | print stack traces for initialization exceptions          |
- |`--no-openflow`| don't start the openflow module automatically             |
+## 🛠️ Tools & Technologies Used
 
+* **Programming Language:** Python
+* **SDN Controller:** (e.g., Ryu / POX / OpenDaylight – update based on your project)
+* **Network Emulator:** Mininet
+* **Protocols:** OpenFlow
+* **Operating System:** Linux (Ubuntu recommended)
+* **Libraries/Modules:**
 
-## Components
+  * Ryu framework (if used)
+  * Networking libraries
 
-POX components are basically Python modules with a few POX-specific
-conventions.  They are looked for everywhere that Python normally looks, plus
-the `pox` and `ext` directories.  Thus, you can do the following:
+---
 
-  ./pox.py forwarding.l2_learning
+## 🌐 Network Topology
 
-As mentioned above, you can pass options to the components by specifying
-options after the component name.  These are passed to the corresponding
-module's `launch()` funcion.  For example, if you want to run POX as an
-OpenFlow controller and control address or port it uses, you can pass those
-as options to the openflow._01 component:
+The project uses a simple SDN-based topology consisting of:
 
-  ./pox.py openflow.of_01 --address=10.1.1.1 --port=6634
+* One **SDN Controller (central brain)**
+* One or more **OpenFlow-enabled switches**
+* Multiple **hosts (clients/servers)**
 
+### Example Topology:
 
-## Further Documentation
+```
+       Controller
+           |
+        Switch
+       /   |   \
+    Host1 Host2 Host3
+```
 
-The full POX documentation is available on GitHub at
-https://noxrepo.github.io/pox-doc/html/
+* All hosts connect to the switch
+* The switch communicates with the controller
+* The controller decides how traffic should flow
+
+---
+
+## ⚙️ How It Works
+
+1. A host sends a packet to another host
+2. The switch checks its flow table:
+
+   * If rule exists → forward packet
+   * If no rule → send request to controller
+3. The controller:
+
+   * Checks access control policies
+   * Decides whether to allow or deny traffic
+4. Based on decision:
+
+   * ✅ Allow → installs flow rule in switch
+   * ❌ Deny → drops packet
+5. Future packets follow installed rules (faster processing)
+
+---
+
+## ▶️ How to Run the Project
+
+### Step 1: Install Dependencies
+
+```bash
+sudo apt update
+sudo apt install mininet python3
+pip install ryu
+```
+
+---
+
+### Step 2: Clone the Repository
+
+```bash
+git clone https://github.com/amarpatil2004/SDN---based-access-control-system.git
+cd SDN---based-access-control-system
+```
+
+---
+
+### Step 3: Start the Controller
+
+```bash
+ryu-manager <controller_file.py>
+```
+
+*(Replace `<controller_file.py>` with your actual file name)*
+
+---
+
+### Step 4: Run Mininet Topology
+
+```bash
+sudo mn --topo single,3 --controller remote
+```
+
+---
+
+### Step 5: Test the Network
+
+Inside Mininet CLI:
+
+```bash
+pingall
+```
+
+* Observe allowed/blocked traffic based on rules
+
+---
+
+## 📊 Key Features
+
+* Centralized access control
+* Dynamic rule enforcement
+* Reduced manual configuration
+* Improved scalability and security
+
+---
+
+## ⚠️ Limitations
+
+* Single point of failure (controller)
+* Performance depends on controller efficiency
+* Requires SDN-compatible infrastructure
+
+---
+
+## 🔮 Future Enhancements
+
+* Add authentication mechanisms
+* Implement role-based access control (RBAC)
+* Use machine learning for adaptive policies
+* Improve fault tolerance with distributed controllers
+
+---
+
+## 👨‍💻 Author
+
+Amar Patil
+
+---
+
+## 📎 Conclusion
+
+This project demonstrates how SDN can be effectively used to implement a **flexible and centralized access control system**, overcoming the limitations of traditional networks and providing better security and scalability.
